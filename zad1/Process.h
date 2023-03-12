@@ -28,12 +28,13 @@ public:
 	long long int executionTime{};		//from start of exec to end of exec
 	long long int processingTime{};			//from arrival to end of exec
 
-	bool bNew = true;
+	bool bNew;
 	bool bFinished;
 
+	Process();
 	Process(int arrivalTime, ProcessType pt); 
 	Process(Process &temp);
-	~Process() { std::cout << "Dest"; }
+	~Process() = default;
 
 	void Execute(long long int time);
 	void Finish(long long int time);

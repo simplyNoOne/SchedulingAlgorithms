@@ -4,7 +4,17 @@
 #include <iostream>
 #include <cstdlib>
 
-Process::Process(int arrivalTime, ProcessType pt)
+Process::Process() {
+	initWaitTime = 0;
+	totalWaitTime = 0;		
+	executionTime = 0;		
+	processingTime = 0;
+
+	bNew = true;
+	bFinished = false;
+}
+
+Process::Process(int arrivalTime, ProcessType pt) : Process()
 {
 	this->arrivalTime = arrivalTime;
 	this->pt = pt;
@@ -16,10 +26,10 @@ Process::Process(int arrivalTime, ProcessType pt)
 	else
 		duration = rand() % pt + 1;
 	timeLeft = duration;
-	std::cout << "arrival " << arrivalTime << std::endl;
+	//std::cout << "arrival " << arrivalTime << std::endl;
 }
 
-Process::Process(Process &temp)
+Process::Process(Process &temp) : Process()
 {
 	arrivalTime = temp.arrivalTime;
 	duration = temp.duration;
@@ -48,7 +58,7 @@ void Process::Finish(long long int time)
 	processingTime = time - arrivalTime;
 	executionTime = time - startExecTime;
 
-	std::cout << "Duration " << duration << std::endl;
-	std::cout << "Wait time " << initWaitTime << std::endl;
-	std::cout << "Execution time " << executionTime << std::endl;
+//	std::cout << "Duration " << duration << std::endl;
+//	std::cout << "Wait time " << initWaitTime << std::endl;
+	//std::cout << "Execution time " << executionTime << std::endl;
 }

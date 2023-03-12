@@ -12,9 +12,11 @@ void FCFS::addProcess(Process* procToAdd)
 
 void FCFS::simCycle(long long int time)
 {
-	current = nullptr;
 	if (!queue.empty()) {
-		current = queue.front();
+		if (!current) {
+			current = queue.front();
+			totalSwitches++;
+		}
 		Algorithm::simCycle(time);
 	}
 	else if (bSpawningFinished)
@@ -23,7 +25,7 @@ void FCFS::simCycle(long long int time)
 
 void FCFS::processFinished()
 {
-	totalSwitches++;
+	current = nullptr;
 	delete queue.front();
 	queue.pop();
 }

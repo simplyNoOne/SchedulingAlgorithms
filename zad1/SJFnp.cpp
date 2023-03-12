@@ -13,8 +13,10 @@ void SJFnp::addProcess(Process* procToAdd)
 void SJFnp::simCycle(long long int time)
 {
     if (!queue.empty()) {
-        if (!current)
+        if (!current) {
             current = queue.top();
+            totalSwitches++;
+        }
         Algorithm::simCycle(time);
     }
     else if (bSpawningFinished)
@@ -24,9 +26,7 @@ void SJFnp::simCycle(long long int time)
 void SJFnp::processFinished()
 {
     //totalWaitTime += current->waitTime;
-    totalSwitches++;
     delete queue.top();
     queue.pop();
-    if(!queue.empty())
-        current = queue.top();
+    current = nullptr;
 }

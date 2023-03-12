@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Algorithm.cpp" />
     <ClCompile Include="FCFS.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="RR.cpp" />

@@ -27,15 +27,13 @@ public :
 	std::mt19937 gen{ rd() };
 
 	System();
-	~System();
+	~System() = default;
 
 
 	void runSim();
-	void printResults();
+	void printResults();		//now this one needs work
 
 	ProcessType randomPT();
 	bool spawnProcess();
-
-
 };
 

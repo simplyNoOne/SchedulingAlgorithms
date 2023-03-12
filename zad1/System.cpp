@@ -21,13 +21,10 @@ System::System()
     algorithms.push_back(new FCFS());
     algorithms.push_back(new SJFp());
     algorithms.push_back(new SJFnp());
-  //  algorithms.push_back(new RR());
+    algorithms.push_back(new RR());
        
 }
 
-System::~System()
-{
-    }
 
 void System::runSim()
 {
