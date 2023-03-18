@@ -1,20 +1,21 @@
 #pragma once
 #include "Algorithm.h"
 #include <set>
+#include <queue>
 
 
 class SJFp : public Algorithm
 {
 public:
-	SJFp();
+	SJFp(int num);
 
 private:
-	
-	std::set<Process*, ShorterJob> queue;
+	std::priority_queue<Process*, std::vector<Process*>, ShorterJob> queue;
 
 public:
 	virtual void addProcess(Process* procToAdd) override;
 	virtual void simCycle(long long int time) override;
 	virtual void processFinished() override;
+	virtual void spawnFinished();
 };
 

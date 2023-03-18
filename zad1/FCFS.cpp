@@ -1,7 +1,8 @@
 #include "FCFS.h"
 
-FCFS::FCFS()
+FCFS::FCFS(long int num) : Algorithm(num)
 {
+	name = "FCFS (First Come First Served)";
 }
 
 void FCFS::addProcess(Process* procToAdd)
@@ -20,12 +21,25 @@ void FCFS::simCycle(long long int time)
 		Algorithm::simCycle(time);
 	}
 	else if (bSpawningFinished)
-		bAlgorithmFinished = true;
+		finish();
 }
 
 void FCFS::processFinished()
 {
+	Algorithm::processFinished();
 	current = nullptr;
 	delete queue.front();
 	queue.pop();
+}
+
+inline void FCFS::spawnFinished()
+{
+	Algorithm::spawnFinished();
+	std::cout << "remaining processes " << queue.size() << std::endl;
+}
+
+void FCFS::finish()
+{
+	Algorithm::finish(); 
+	totalStarved = 0;
 }

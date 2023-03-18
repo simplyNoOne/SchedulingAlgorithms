@@ -1,7 +1,4 @@
 #include "Process.h"
-
-#include <memory>
-#include <iostream>
 #include <cstdlib>
 
 Process::Process() {
@@ -11,7 +8,9 @@ Process::Process() {
 	processingTime = 0;
 
 	bNew = true;
+	bPaused = false;
 	bFinished = false;
+	bStarved = false;
 }
 
 Process::Process(int arrivalTime, ProcessType pt) : Process()
@@ -19,14 +18,20 @@ Process::Process(int arrivalTime, ProcessType pt) : Process()
 	this->arrivalTime = arrivalTime;
 	this->pt = pt;
 
-	if (pt == PT_long) 
+	if (pt == PT_long) {
+		numLong++;
 		duration = rand() % (pt - PT_medium) + PT_medium + 1;
-	else if (pt == PT_medium) 
+	}
+	else if (pt == PT_medium) {
+		numMed ++;
 		duration = rand() % (pt - PT_short) + PT_short + 1;
-	else
-		duration = rand() % pt + 1;
+	}
+	else {
+		numShort++;
+		duration = rand() % (pt - PT_none) +PT_none + 1;
+	}
 	timeLeft = duration;
-	//std::cout << "arrival " << arrivalTime << std::endl;
+	starvedThreshold = duration * starvedMult;
 }
 
 Process::Process(Process &temp) : Process()
@@ -35,30 +40,44 @@ Process::Process(Process &temp) : Process()
 	duration = temp.duration;
 	timeLeft = temp.timeLeft;
 	pt = temp.pt;
-
+	starvedThreshold = temp.starvedThreshold;
 }
 
-void Process::Execute(long long int time)
+void Process::tick(long long int time)
 {
 	if (bNew) {
-		initWaitTime = time - arrivalTime;
-		totalWaitTime += initWaitTime;
-		startExecTime = time;
 		bNew = false;
+		initWaitTime = time - arrivalTime;
+		totalWaitTime = initWaitTime;
+		startExecTime = time;
+		if (initWaitTime > starvedThreshold)
+			bStarved = true;
+	}
+	if (bPaused) {
+		bPaused = false;
+		totalWaitTime += (time - lastPauseTime);
+		if (time - lastPauseTime > starvedThreshold)
+			bStarved = true;
 	}
 	timeLeft--;
 	if (timeLeft == 0)
-		Finish(time);
+		finish(time);
 }
 
 
-void Process::Finish(long long int time)
+void Process::finish(long long int time)
 {
 	bFinished = true;
 	processingTime = time - arrivalTime;
 	executionTime = time - startExecTime;
-
-//	std::cout << "Duration " << duration << std::endl;
-//	std::cout << "Wait time " << initWaitTime << std::endl;
-	//std::cout << "Execution time " << executionTime << std::endl;
 }
+
+void Process::pauseExecution(long long int time)
+{
+	bPaused = true;
+	lastPauseTime = time;
+}
+
+int Process::numLong = 0;
+int Process::numMed = 0;
+int Process::numShort = 0;

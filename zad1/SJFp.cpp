@@ -1,31 +1,41 @@
 #include "SJFp.h"
 
-SJFp::SJFp()
+SJFp::SJFp(int num) : Algorithm(num)
 {
+    name = "SJFp (Shortest Job First, preemptive)";
 }
 
 void SJFp::addProcess(Process* procToAdd)
 {
     Process* proc = new Process(*procToAdd);
-    queue.insert(proc);
+    queue.push(proc);
 }
 
 void SJFp::simCycle(long long int time)
 {    
     if (!queue.empty()) {
-        if (current != *queue.begin()) {
+        if (current != queue.top()) {
+            if (current)
+                current->pauseExecution(time);
             totalSwitches++;
-            current = *queue.begin();
+            current = queue.top();
         }
         Algorithm::simCycle(time);
     }
     else if (bSpawningFinished)
-        bAlgorithmFinished = true;
+        finish();
 }
 
 void SJFp::processFinished()
 {
-    delete current;
-    queue.erase(current);
+    Algorithm::processFinished();
+    delete queue.top();
+    queue.pop();
     current = nullptr;
+}
+
+void SJFp::spawnFinished()
+{
+    Algorithm::spawnFinished();
+    std::cout << "remaining processes " << queue.size() << std::endl;
 }

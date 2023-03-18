@@ -1,6 +1,6 @@
 #include "System.h"
 
-
+#include <iomanip>
 #include <iostream>
 #include <random>
 #include "Process.h"
@@ -10,6 +10,15 @@
 #include "SJFp.h"
 #include "RR.h"
 
+using std::cout, std::endl;
+
+System::~System()
+{
+    for each (Algorithm* a in algorithms)
+    {
+        delete a;
+    }
+}
 
 System::System()
 {
@@ -17,52 +26,68 @@ System::System()
 
     time = 0;
     bSimulationFinished = false;
+    bSpawningFinished = false;
 
-    algorithms.push_back(new FCFS());
-    algorithms.push_back(new SJFp());
-    algorithms.push_back(new SJFnp());
-    algorithms.push_back(new RR());
-       
+    algorithms.push_back(new FCFS(numProcToSpawn));
+    algorithms.push_back(new SJFp(numProcToSpawn));
+    algorithms.push_back(new SJFnp(numProcToSpawn));
+    algorithms.push_back(new RR(numProcToSpawn, RRquant));
 }
 
 
 void System::runSim()
 {
-  //  while (!SJFdone || !FCFSdone || !RRdone) {
     while (!bSimulationFinished) {
         time++;
         int finishedAlgs{};
-        if (numProcToSpawn >= 0) {
+        if (!bSpawningFinished) {
             if (spawnProcess())
                 numProcToSpawn--;
         }
-        for each (Algorithm * a in algorithms) {
+        for each (Algorithm* a in algorithms) {
             a->simCycle(time);
             if (a->isFinished())
                 finishedAlgs++;
         }
         if (finishedAlgs == algorithms.size())
             bSimulationFinished = true;
-
     }
-    std::cout << "donaoieh\n";
 }
 
 void System::printResults()
 {
+    cout << "Long: "<< Process::numLong << "\tMedium: " << Process::numMed << "\tShort: " << Process::numShort<<"\n";
+
+    cout << std::setw(160) << std::setfill('_') << " \n" << std::setfill(' ');
+
+    cout << std::fixed << std::setprecision(2) << std::setw(45) << std::left << "Name:" << std::right << "|";
+    cout << std::setw(15) << "Switches" << " |";
+    cout << std::setw(15) << "Starved" << " |";
+    cout << std::setw(15) << "Init Wait" << " |";
+    cout << std::setw(15) << "Total Wait" << " |";
+    cout << std::setw(15) << "Processing" << " |";
+    cout << std::setw(15) << "Execution" << " |\n";
+
+    cout<<std::setw(160) << std::setfill('_')<<" \n";
+
+    for each (Algorithm* a in algorithms)
+    {
+        std::cout << std::endl;
+        std::cout << a->results()<<std::endl;
+
+    }
+    cout << std::setw(160) << std::setfill('_') << " \n";
 }
 
 ProcessType System::randomPT()
 {
-    std::normal_distribution normD{ 0.2, 1.3 };
-    double prob = normD(gen);
-    ProcessType pt;
-
-    if (prob <= 0 || prob > 1)
+    if (rand() % 1000 > spawnPercent*1000)
         return PT_none;
-    if (prob < 0.4)
+    double prob = (double) rand() / RAND_MAX;
+    ProcessType pt;
+    if (prob < shortPercent)
         pt = PT_short;
-    else if (prob < 0.7)
+    else if (prob < 1 - longPercent)
         pt = PT_medium;
     else
         pt = PT_long;
@@ -72,6 +97,7 @@ ProcessType System::randomPT()
 bool System::spawnProcess()
 {
     if (numProcToSpawn == 0){
+        bSpawningFinished = true;
         for each (Algorithm * a in algorithms)
         {
             a->spawnFinished();
@@ -89,7 +115,6 @@ bool System::spawnProcess()
     delete tempProcess;
     return true;
 }
-
 
 
 

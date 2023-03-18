@@ -10,29 +10,31 @@ class Algorithm;
 
 class System
 {
-public :
-	//stats
-	const long totalProc = 100'000;
-	long numProcToSpawn;
-	
-
-	long long int time;
-	bool bSimulationFinished;
-
+private:
 	Process* tempProcess;
 	std::vector<Algorithm*> algorithms;
-	
-	//for randoms
-	std::random_device rd{};
-	std::mt19937 gen{ rd() };
 
+	//settings
+	const long totalProc = 200'000;		//how many processes to spawn
+	const int RRquant = 30;
+	const double shortPercent = 0.8;	//how many of them should be short...
+	const double longPercent = 0.07;		//...or long
+	const double spawnPercent = 0.05;		//what is a chance of spawning a process each cycle
+
+	//logic
+	int numProcToSpawn;
+	long int time;
+	bool bSimulationFinished;
+	bool bSpawningFinished;
+
+public:
 	System();
-	~System() = default;
-
+	~System();
 
 	void runSim();
-	void printResults();		//now this one needs work
+	void printResults();		
 
+private:
 	ProcessType randomPT();
 	bool spawnProcess();
 };

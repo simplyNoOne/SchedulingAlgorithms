@@ -1,56 +1,56 @@
 #include "RR.h"
 
-RR::RR()
+RR::RR(int num, int quant) : Algorithm(num)
 {
+	name = "RR (Round Robin)";
+	this->quant = quant;
 	leftQuant = quant;
-	it = queue.begin();
 }
 
 void RR::addProcess(Process* procToAdd)
 {
 	Process* proc = new Process(*procToAdd);
-	queue.insert(proc);
+	queue.push(proc);
 }
 
 void RR::simCycle(long long int time)
 {
 	if (!queue.empty()) {
 		if (!current) {
-			it = queue.begin();
-			current = *it;		//will only happen once during the start of the algorithm.
-		}
-		if (leftQuant == 0) {
 			leftQuant = quant;
+			current = queue.front();
 			totalSwitches++;
-			it++;
-			if (it == queue.end())
-				it = queue.begin();
-			current = *it;
 		}
-		leftQuant--;
+		else if (leftQuant == 0) {
+			leftQuant = quant;
+			current->pauseExecution(time);
+			queue.push(current);
+			queue.pop();
+			current = queue.front();
+			totalSwitches++;
+		}
+
 		Algorithm::simCycle(time);
+		leftQuant--;
 	}
 	else if (bSpawningFinished)
-		bAlgorithmFinished = true;
+		finish();
 }
 
 void RR::processFinished()
 {
-	//first, we move the iterator, so that it will continute pointing to a valid object
-	it++;
-	if (it == queue.end())
-		it = queue.begin();
-	totalSwitches++;
-	delete current;		
-	queue.erase(current);		//then we delete the pointer and the set shrinks, it points now to a valid place one index too far
-	if (queue.size() == 0) {			//there might be the case, where we just removed the last element
-		current = nullptr;
-		return;
-	}
-	if (it != queue.begin())
-		it--;
-	current = *it;
-	//correction, if process finishes at the same time as quant. current is already assigned, so it would be skipped
-	if (leftQuant == 0)
-		leftQuant = quant;
+	Algorithm::processFinished();
+	delete current;
+	queue.pop();
+	current = nullptr;
+}
+
+void RR::finish() {
+		Algorithm::finish();
+		totalStarved = 0;
+}
+void RR::spawnFinished()
+{
+	Algorithm::spawnFinished();
+	std::cout << "remaining processes " << queue.size() << std::endl;
 }

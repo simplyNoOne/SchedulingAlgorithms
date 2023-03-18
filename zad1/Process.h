@@ -1,43 +1,59 @@
 #pragma once
 
-
 #include <stdio.h>
 #include <iostream>
 #include <memory>
 
 enum ProcessType {
 	//enum contains maximum durations for process types
-	PT_none = 0,
-	PT_short = 5,
-	PT_medium = 15, 
-	PT_long = 30
+	PT_none = 5,
+	PT_short = 40,
+	PT_medium = 90, 
+	PT_long = 150
 };
 
 class Process
 {
 public:
-	ProcessType pt;
+	//settings
+	const static int starvedMult = 10'000;
 
-	long long int arrivalTime;
+	//stats for quantity
+	static int numLong;
+	static int numMed;
+	static int numShort;
+
+	//logic
+	ProcessType pt;
+	
 	int duration;
 	int timeLeft;
-	long long int startExecTime{};
-
-	long long int initWaitTime{};			//from arrival to start exec
-	long long int totalWaitTime{};		//from arrival including all waits
-	long long int executionTime{};		//from start of exec to end of exec
-	long long int processingTime{};			//from arrival to end of exec
+	int starvedThreshold;
+	long int arrivalTime;
+	long int startExecTime{};
+	long int lastPauseTime{};
 
 	bool bNew;
+	bool bPaused;
 	bool bFinished;
+	bool bStarved;
+
+	//stats for actual results
+	long int initWaitTime{};			//from arrival to start exec
+	long int totalWaitTime{};		//from arrival including all waits
+	long int executionTime{};		//from start of exec to end of exec
+	long int processingTime{};			//from arrival to end of exec
+
 
 	Process();
 	Process(int arrivalTime, ProcessType pt); 
 	Process(Process &temp);
 	~Process() = default;
 
-	void Execute(long long int time);
-	void Finish(long long int time);
+	void tick(long long int time);
+	void pauseExecution(long long int time);
+	void finish(long long int time);
+	void starve() { if (initWaitTime > starvedThreshold) bStarved = true; }
 
 	inline bool isFinished() { return bFinished; }
 

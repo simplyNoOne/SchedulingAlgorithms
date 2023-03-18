@@ -13,10 +13,9 @@ int main(){
 
     std::cout << std::endl;
 
-
     system.runSim();
     
-//    system.printResults();
+    system.printResults();
     return 0;
 }
 
