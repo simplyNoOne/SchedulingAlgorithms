@@ -31,10 +31,10 @@ void Algorithm::processFinished()
 void Algorithm::finish()
 {
 	bAlgorithmFinished = true;
-	meanInitWaitTime = totalInitWaitTime / numProcesses;
-	meanTotalWaitTime = totalTotalWaitTime / numProcesses;
-	meanExecutionTime = totalExecutionTime / numProcesses;
-	meanProcessingTime = totalProcessingTime / numProcesses;
+	meanInitWaitTime = (double)totalInitWaitTime / numProcesses;
+	meanTotalWaitTime = (double)totalTotalWaitTime / numProcesses;
+	meanExecutionTime = (double)totalExecutionTime / numProcesses;
+	meanProcessingTime = (double)totalProcessingTime / numProcesses;
 }
 
 std::string Algorithm::results()

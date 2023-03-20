@@ -8,17 +8,17 @@ SJFp::SJFp(int num) : Algorithm(num)
 void SJFp::addProcess(Process* procToAdd)
 {
     Process* proc = new Process(*procToAdd);
-    queue.push(proc);
+    queue.insert(proc);
 }
 
 void SJFp::simCycle(long long int time)
 {    
     if (!queue.empty()) {
-        if (current != queue.top()) {
+        if (current != *queue.begin()) {
             if (current)
                 current->pauseExecution(time);
             totalSwitches++;
-            current = queue.top();
+            current = *queue.begin();
         }
         Algorithm::simCycle(time);
     }
@@ -29,8 +29,8 @@ void SJFp::simCycle(long long int time)
 void SJFp::processFinished()
 {
     Algorithm::processFinished();
-    delete queue.top();
-    queue.pop();
+    delete *queue.begin();
+    queue.erase(queue.begin());
     current = nullptr;
 }
 

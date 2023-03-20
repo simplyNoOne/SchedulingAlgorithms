@@ -1,7 +1,6 @@
 #pragma once
 #include "Algorithm.h"
 #include <set>
-#include <queue>
 
 
 class SJFp : public Algorithm
@@ -10,7 +9,7 @@ public:
 	SJFp(int num);
 
 private:
-	std::priority_queue<Process*, std::vector<Process*>, ShorterJob> queue;
+	std::multiset<Process*, ShorterJob> queue;
 
 public:
 	virtual void addProcess(Process* procToAdd) override;

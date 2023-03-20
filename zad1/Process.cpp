@@ -34,6 +34,14 @@ Process::Process(int arrivalTime, ProcessType pt) : Process()
 	starvedThreshold = duration * starvedMult;
 }
 
+Process::Process(int arrivalTime, int duration)
+{
+	this->arrivalTime = arrivalTime;
+	this->duration = duration;
+	timeLeft = duration;
+	starvedThreshold = duration * starvedMult;
+}
+
 Process::Process(Process &temp) : Process()
 {
 	arrivalTime = temp.arrivalTime;

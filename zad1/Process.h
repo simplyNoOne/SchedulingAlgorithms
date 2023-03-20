@@ -47,6 +47,7 @@ public:
 
 	Process();
 	Process(int arrivalTime, ProcessType pt); 
+	Process(int arrivalTime, int duration);
 	Process(Process &temp);
 	~Process() = default;
 

@@ -43,6 +43,7 @@ void System::runSim()
         if (!bSpawningFinished) {
             if (spawnProcess())
                 numProcToSpawn--;
+            //spawnSet(time);           //predesigned sets
         }
         for each (Algorithm* a in algorithms) {
             a->simCycle(time);
@@ -56,6 +57,8 @@ void System::runSim()
 
 void System::printResults()
 {
+    cout <<"\n" << std::setw(160) << std::setfill('_') << " \n\n" << std::setfill(' ');
+    cout << "Total processes: " << totalProc << std::endl;
     cout << "Long: "<< Process::numLong << "\tMedium: " << Process::numMed << "\tShort: " << Process::numShort<<"\n";
 
     cout << std::setw(160) << std::setfill('_') << " \n" << std::setfill(' ');
@@ -76,7 +79,7 @@ void System::printResults()
         std::cout << a->results()<<std::endl;
 
     }
-    cout << std::setw(160) << std::setfill('_') << " \n";
+    cout << std::setw(160) << std::setfill('_') << " \n\n";
 }
 
 ProcessType System::randomPT()
@@ -92,6 +95,26 @@ ProcessType System::randomPT()
     else
         pt = PT_long;
     return pt;
+}
+
+void System::spawnSet(long long int time)
+{
+    if (arrivals.empty()) {
+        bSpawningFinished = true;
+        for each (Algorithm * a in algorithms)
+        {
+            a->spawnFinished();
+        }
+        return;
+    }
+    if(time != arrivals.front())
+        return;
+    tempProcess = new Process(time, lengths.front());
+    for each (Algorithm * a in algorithms)
+        a->addProcess(tempProcess);
+    delete tempProcess;
+    lengths.pop_front();
+    arrivals.pop_front();
 }
 
 bool System::spawnProcess()
@@ -115,9 +138,3 @@ bool System::spawnProcess()
     delete tempProcess;
     return true;
 }
-
-
-
-
-
-
