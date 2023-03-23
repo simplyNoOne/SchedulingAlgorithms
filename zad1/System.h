@@ -10,20 +10,20 @@ class Algorithm;
 class System
 {
 private:
-	//for set testing
-	std::deque<int> arrivals = { 1, 2, 3, 5, 6 };
-	std::deque<int> lengths = { 3, 8, 6, 4, 2};
-
-
 	Process* tempProcess;
 	std::vector<Algorithm*> algorithms;
 
+	//for set testing
+	bool bUseSet = false;
+	std::deque<int> arrivals = { 1, 2, 3, 5, 6, 7};
+	std::deque<int> lengths = { 3, 8, 6, 4, 2, 4};
+
 	//settings
-	const long totalProc = 100'000;		//how many processes to spawn
-	const int RRquant = 70;
-	const double shortPercent = 0.95;	//how many of them should be short...
-	const double longPercent = 0.01;		//...or long
-	const double spawnPercent = 0.02;		//what is a chance of spawning a process each cycle
+	long totalProc = 25'000;				//how many processes to spawn
+	const double shortPercent = 0.60;		//how many of them should be short...
+	const double longPercent = 0.10;		//...or long
+	const double spawnPercent = 0.05;		//what is a chance of spawning a process each cycle
+	const int RRquant = 70;					//quant for round robin
 
 	//logic
 	int numProcToSpawn;
@@ -42,5 +42,6 @@ private:
 	ProcessType randomPT();
 	bool spawnProcess();
 	void spawnSet(long long int time);
+	void printIntro();
 };
 

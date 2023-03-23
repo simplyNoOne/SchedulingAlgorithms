@@ -16,7 +16,7 @@ class Process
 {
 public:
 	//settings
-	const static int starvedMult = 10'000;
+	const static int starvedMult = 5'000;
 
 	//stats for quantity
 	static int numLong;
@@ -40,8 +40,8 @@ public:
 
 	//stats for actual results
 	long int initWaitTime{};			//from arrival to start exec
-	long int totalWaitTime{};		//from arrival including all waits
-	long int executionTime{};		//from start of exec to end of exec
+	long int totalWaitTime{};			//from arrival including all waits
+	long int executionTime{};			//from start of exec to end of exec
 	long int processingTime{};			//from arrival to end of exec
 
 

@@ -22,6 +22,8 @@ System::~System()
 
 System::System()
 {
+    if (bUseSet)
+        totalProc = arrivals.size();
     numProcToSpawn = totalProc;
 
     time = 0;
@@ -41,9 +43,12 @@ void System::runSim()
         time++;
         int finishedAlgs{};
         if (!bSpawningFinished) {
-            if (spawnProcess())
-                numProcToSpawn--;
-            //spawnSet(time);           //predesigned sets
+            if(bUseSet)
+                spawnSet(time);
+            else {
+                if (spawnProcess())
+                    numProcToSpawn--;
+            }
         }
         for each (Algorithm* a in algorithms) {
             a->simCycle(time);
@@ -57,27 +62,11 @@ void System::runSim()
 
 void System::printResults()
 {
-    cout <<"\n" << std::setw(160) << std::setfill('_') << " \n\n" << std::setfill(' ');
-    cout << "Total processes: " << totalProc << std::endl;
-    cout << "Long: "<< Process::numLong << "\tMedium: " << Process::numMed << "\tShort: " << Process::numShort<<"\n";
-
-    cout << std::setw(160) << std::setfill('_') << " \n" << std::setfill(' ');
-
-    cout << std::fixed << std::setprecision(2) << std::setw(45) << std::left << "Name:" << std::right << "|";
-    cout << std::setw(15) << "Switches" << " |";
-    cout << std::setw(15) << "Starved" << " |";
-    cout << std::setw(15) << "Init Wait" << " |";
-    cout << std::setw(15) << "Total Wait" << " |";
-    cout << std::setw(15) << "Processing" << " |";
-    cout << std::setw(15) << "Execution" << " |\n";
-
-    cout<<std::setw(160) << std::setfill('_')<<" \n";
+    printIntro();
 
     for each (Algorithm* a in algorithms)
     {
-        std::cout << std::endl;
-        std::cout << a->results()<<std::endl;
-
+        std::cout << std::endl << a->results()<<std::endl;
     }
     cout << std::setw(160) << std::setfill('_') << " \n\n";
 }
@@ -99,7 +88,7 @@ ProcessType System::randomPT()
 
 void System::spawnSet(long long int time)
 {
-    if (arrivals.empty()) {
+    if (arrivals.empty() || lengths.empty()) {
         bSpawningFinished = true;
         for each (Algorithm * a in algorithms)
         {
@@ -137,4 +126,23 @@ bool System::spawnProcess()
     }
     delete tempProcess;
     return true;
+}
+
+void System::printIntro()
+{
+    cout << "\n" << std::setw(160) << std::setfill('_') << " \n\n" << std::setfill(' ');
+    cout << "Total processes: " << totalProc << std::endl;
+    cout << "\tShort: " << Process::numShort << "\tMedium: " << Process::numMed << "\tLong: " << Process::numLong << "\n";
+
+    cout << std::setw(160) << std::setfill('_') << " \n" << std::setfill(' ');
+
+    cout << std::fixed << std::setprecision(2) << std::setw(45) << std::left << "Name:" << std::right << "|";
+    cout << std::setw(15) << "Switches" << " |";
+    cout << std::setw(15) << "Starved" << " |";
+    cout << std::setw(15) << "Init Wait" << " |";
+    cout << std::setw(15) << "Total Wait" << " |";
+    cout << std::setw(15) << "Processing" << " |";
+    cout << std::setw(15) << "Execution" << " |\n";
+
+    cout << std::setw(160) << std::setfill('_') << " \n";
 }
